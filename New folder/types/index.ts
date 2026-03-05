@@ -1,5 +1,0 @@
-export * from '@/types/jobs'
-export * from '@/types/employees'
-export * from '@/types/user'
-export * from '@/types/dashboard'
-export * from '@/types/activity'
