@@ -4,7 +4,7 @@ import path from "path";
 
 try {
   process.loadEnvFile(path.resolve(process.cwd(), ".env"));
-} catch (e) {}
+} catch {}
 
 async function init() {
   try {

@@ -68,9 +68,9 @@ export interface JobPosting {
   salaryMax: number;
   currency: string;
   description: string | null;
-  requirements: any; // JSON array in DB
-  benefits: any; // JSON array in DB
-  responsibilities: any; // JSON array in DB
+  requirements: string[]; // JSON array in DB
+  benefits: string[]; // JSON array in DB
+  responsibilities: string[]; // JSON array in DB
   applicationDeadline: Date;
   contactEmail: string;
   created_at: Date;
