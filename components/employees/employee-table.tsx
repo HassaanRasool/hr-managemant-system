@@ -1,0 +1,137 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
+import { useAppStore } from "@/lib/store";
+import { useAuth } from "@/lib/auth-store";
+
+interface EmployeeTableProps {
+  searchTerm: string;
+}
+
+export function EmployeeTable({ searchTerm }: EmployeeTableProps) {
+  const [mounted, setMounted] = useState(false);
+  const { user } = useAuth();
+  const canManage = user?.role === "admin" || user?.role === "hr_manager";
+  const employees = useAppStore((state) => state.employees);
+  console.log("EmployeeTable render, employees count:", employees.length);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const filteredEmployees = employees.filter(
+    (employee) =>
+      (employee.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (employee.position || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (employee.department || "").toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  if (!mounted) {
+    return null; // Or a loading skeleton
+  }
+
+  const getStatusBadge = (status: string) => {
+    const variants = {
+      Active: "default",
+      "On Leave": "secondary",
+      Inactive: "destructive",
+    } as const;
+
+    return (
+      <Badge variant={variants[status as keyof typeof variants] || "default"}>
+        {status}
+      </Badge>
+    );
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Employee Directory</CardTitle>
+        <CardDescription>
+          A list of all employees in the organization
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="p-0 sm:p-6">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Employee ID</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Position</TableHead>
+                <TableHead>Department</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Join Date</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredEmployees.map((employee) => (
+                <TableRow key={employee.id}>
+                  <TableCell className="font-medium">{employee.id}</TableCell>
+                  <TableCell>{employee.name}</TableCell>
+                  <TableCell>{employee.position}</TableCell>
+                  <TableCell>{employee.department}</TableCell>
+                  <TableCell>{getStatusBadge(employee.status)}</TableCell>
+                  <TableCell>{employee.joinDate}</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                          <Eye className="mr-2 h-4 w-4" />
+                          View Details
+                        </DropdownMenuItem>
+                        {canManage && (
+                          <>
+                            <DropdownMenuItem>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="text-destructive">
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
