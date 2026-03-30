@@ -3,7 +3,7 @@ import { query, execute } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const leaves = await query(`
       SELECT l.*, CONCAT(e.first_name, ' ', e.last_name) as employee 
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     `);
     
     // Map DB fields to store format if necessary
-    const mappedLeaves = (leaves as any[]).map(l => ({
+    const mappedLeaves = (leaves as Record<string, unknown>[]).map(l => ({
       id: l.id,
       employee: l.employee,
       employee_id: l.employee_id,

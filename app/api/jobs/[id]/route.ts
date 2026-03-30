@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { query, execute } from '@/lib/db'
+import { execute } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,11 +15,11 @@ export async function PATCH(
     const { id } = await params;
     const body = await request.json()
     const updates: string[] = []
-    const values: any[] = []
+    const values: (string | number | boolean | Date | null)[] = []
     
-    for (const [key, value] of Object.entries(body)) {
-      updates.push(`${key} = ?`)
-      values.push(value)
+    for (const [key, value] of Object.entries(body as Record<string, unknown>)) {
+      updates.push(`${dbKey(key)} = ?`)
+      values.push(value as string | number | boolean | Date | null)
     }
     
     if (updates.length > 0) {
@@ -32,4 +32,9 @@ export async function PATCH(
     console.error('Error updating job:', err)
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
+}
+
+function dbKey(key: string): string {
+  // Add mapping if needed, otherwise returns key.
+  return key;
 }

@@ -3,7 +3,7 @@ import { query, execute } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const reviews = await query(`
       SELECT p.*, CONCAT(e.first_name, ' ', e.last_name) as employee, e.department 
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       ORDER BY p.created_at DESC
     `);
     
-    const mappedReviews = (reviews as any[]).map(r => ({
+    const mappedReviews = (reviews as Record<string, unknown>[]).map(r => ({
       id: r.id,
       employeeId: r.employee_id,
       employee: r.employee,
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       achievements: r.achievements,
       developmentPlan: r.development_plan,
       status: r.status,
-      score: r.overall_rating * 20 // map 1-5 to 0-100 logic if needed
+      score: (r.overall_rating as number) * 20 // map 1-5 to 0-100 logic if needed
     }));
 
     return NextResponse.json(mappedReviews);
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     
     if (!existingReviewer) {
       const [firstEmp] = await query("SELECT id FROM Employee LIMIT 1");
-      safeReviewerId = (firstEmp as any)?.id;
+      safeReviewerId = (firstEmp as { id: string })?.id;
     }
 
     await execute(

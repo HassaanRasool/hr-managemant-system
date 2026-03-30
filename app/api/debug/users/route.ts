@@ -7,7 +7,8 @@ export async function GET() {
     const usersSchema = await query("DESCRIBE users");
     const users = await query("SELECT id, email, name, role FROM users LIMIT 10");
     return NextResponse.json({ success: true, tables, usersSchema, users });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message, stack: error.stack }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as Error;
+    return NextResponse.json({ success: false, error: err.message, stack: err.stack }, { status: 500 });
   }
 }

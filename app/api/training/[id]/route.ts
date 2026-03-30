@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { query, execute } from '@/lib/db'
+import { execute } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,11 +15,11 @@ export async function PATCH(
     const { id } = await params;
     const body = await request.json()
     const updates: string[] = []
-    const values: any[] = []
+    const values: (string | number | boolean | Date | null)[] = []
     
-    for (const [key, value] of Object.entries(body)) {
+    for (const [key, value] of Object.entries(body as Record<string, unknown>)) {
       updates.push(`${key} = ?`)
-      values.push(value)
+      values.push(value as string | number | boolean | Date | null)
     }
     
     if (updates.length > 0) {

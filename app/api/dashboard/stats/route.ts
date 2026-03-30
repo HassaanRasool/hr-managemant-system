@@ -12,8 +12,8 @@ export async function GET() {
       openPosRes,
       pendingLeaveRes,
       allLeaveRes,
-      trainingSessionsRes,
-      performanceRes
+      trainingSessionsRes
+      // performanceRes
     ] = await Promise.all([
       query<{count: number}[]>('SELECT COUNT(*) as count FROM Employee WHERE status = ?', ['Active']),
       query<{count: number}[]>('SELECT COUNT(*) as count FROM Employee'),
