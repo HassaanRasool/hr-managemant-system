@@ -97,6 +97,7 @@ export function AddEmployeeDialog({
     addEmployee({
       id: newId,
       name: `${formData.firstName} ${formData.lastName}`,
+      email: formData.email,
       position: formData.position,
       department: formData.department,
       status: "Active",
