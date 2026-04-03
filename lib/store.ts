@@ -317,7 +317,7 @@ export const useAppStore = create<AppState>((set) => ({
   initializeStore: async () => {
     try {
       const [empRes, leaveRes, perfRes, jobRes, trainRes] = await Promise.all([
-        fetch('/api/employees'),
+        fetch('/api/employees?limit=1000'),
         fetch('/api/leave'),
         fetch('/api/performance'),
         fetch('/api/jobs'),

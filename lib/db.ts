@@ -80,6 +80,58 @@ export async function ensureSchema() {
       console.error('Schema verification failed:', error.message);
     }
   }
+
+  try {
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS \`Team\` (
+          \`id\` VARCHAR(191) PRIMARY KEY,
+          \`name\` VARCHAR(191) UNIQUE NOT NULL,
+          \`description\` TEXT NULL,
+          \`created_at\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+          \`updated_at\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
+      )
+    `);
+    
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS \`TeamMember\` (
+          \`id\` VARCHAR(191) PRIMARY KEY,
+          \`team_id\` VARCHAR(191) NOT NULL,
+          \`user_id\` VARCHAR(191) NOT NULL,
+          \`role\` VARCHAR(191) NOT NULL DEFAULT 'Member',
+          \`created_at\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+          \`updated_at\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+          FOREIGN KEY (\`team_id\`) REFERENCES \`Team\`(\`id\`) ON DELETE CASCADE,
+          FOREIGN KEY (\`user_id\`) REFERENCES \`users\`(\`id\`) ON DELETE CASCADE,
+          UNIQUE (\`team_id\`, \`user_id\`)
+      )
+    `);
+
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS \`ChatMessage\` (
+          \`id\` VARCHAR(191) PRIMARY KEY,
+          \`sender_id\` VARCHAR(191) NOT NULL,
+          \`content\` TEXT NOT NULL,
+          \`target_type\` ENUM('all', 'team', 'individual') NOT NULL,
+          \`target_id\` VARCHAR(191) NULL,
+          \`created_at\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+          FOREIGN KEY (\`sender_id\`) REFERENCES \`users\`(\`id\`) ON DELETE CASCADE
+      )
+    `);
+    console.log('Schema verified: Team and Chat tables exist');
+
+    // Seed the default teams if they don't exist
+    const defaultTeams = ['IT', 'HR', 'Designing', 'Accounts'];
+    for (const team of defaultTeams) {
+      await pool.execute(
+        "INSERT IGNORE INTO \`Team\` (\`id\`, \`name\`, \`description\`) VALUES (UUID(), ?, ?)",
+        [team, `${team} Department`]
+      );
+    }
+    console.log('Default teams seeded');
+
+  } catch (error: any) {
+    console.error('Team schema creation/verification failed:', error.message);
+  }
 }
 
 // Run schema verification once locally

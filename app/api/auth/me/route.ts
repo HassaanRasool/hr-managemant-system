@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
     const authHeader = request.headers.get("authorization")
     const token = authHeader?.replace("Bearer ", "")
 
-    if (!token) {
+    if (!token || token === "null" || token === "undefined") {
       return NextResponse.json(
         { error: "No token provided" },
         { status: 401 }

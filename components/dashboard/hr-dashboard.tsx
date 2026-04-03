@@ -14,6 +14,8 @@ import { TrainingManagement } from "@/components/training/training-management";
 import { DisciplinaryManagement } from "@/components/disciplinary/disciplinary-management";
 import { EmployeeSeparation } from "@/components/separation/employee-separation";
 import { ReportsManagement } from "@/components/reports/reports-management";
+import { TeamsManagement } from "@/components/teams/teams-management";
+import { ChatManagement } from "@/components/chat/chat-management";
 import { useAppStore } from "@/lib/store";
 
 export function HRDashboard() {
@@ -71,6 +73,10 @@ export function HRDashboard() {
         return <EmployeeSeparation />;
       case "reports":
         return <ReportsManagement />;
+      case "teams":
+        return <TeamsManagement />;
+      case "chat":
+        return <ChatManagement />;
       default:
         return <DashboardOverview />;
     }

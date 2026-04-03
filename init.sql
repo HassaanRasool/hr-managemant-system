@@ -156,3 +156,30 @@ CREATE TABLE `TrainingEnrollment` (
     SET NULL,
         UNIQUE (`employee_id`, `program_id`, `session_id`)
 );
+CREATE TABLE `Team` (
+    `id` VARCHAR(191) PRIMARY KEY,
+    `name` VARCHAR(191) UNIQUE NOT NULL,
+    `description` TEXT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
+);
+CREATE TABLE `TeamMember` (
+    `id` VARCHAR(191) PRIMARY KEY,
+    `team_id` VARCHAR(191) NOT NULL,
+    `user_id` VARCHAR(191) NOT NULL,
+    `role` VARCHAR(191) NOT NULL DEFAULT 'Member',
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+    FOREIGN KEY (`team_id`) REFERENCES `Team`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    UNIQUE (`team_id`, `user_id`)
+);
+CREATE TABLE `ChatMessage` (
+    `id` VARCHAR(191) PRIMARY KEY,
+    `sender_id` VARCHAR(191) NOT NULL,
+    `content` TEXT NOT NULL,
+    `target_type` ENUM('all', 'team', 'individual') NOT NULL,
+    `target_id` VARCHAR(191) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    FOREIGN KEY (`sender_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);

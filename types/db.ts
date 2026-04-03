@@ -153,3 +153,31 @@ export interface TrainingEnrollment {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface Team {
+  id: string;
+  name: string;
+  description: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface TeamMember {
+  id: string;
+  team_id: string;
+  user_id: string;
+  role: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export type ChatTargetType = 'all' | 'team' | 'individual';
+
+export interface ChatMessage {
+  id: string;
+  sender_id: string;
+  content: string;
+  target_type: ChatTargetType;
+  target_id: string | null;
+  created_at: Date;
+}

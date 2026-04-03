@@ -8,6 +8,7 @@ import {
   LogOut,
   Building2,
   PieChart,
+  MessageSquare,
 } from "lucide-react"
 
 export const navigationItems = [
@@ -37,6 +38,13 @@ export const navigationItems = [
     items: [
       { title: "Disciplinary Management", icon: AlertTriangle, id: "disciplinary" },
       { title: "Employee Separation", icon: LogOut, id: "separation" },
+    ],
+  },
+  {
+    title: "Collaboration",
+    items: [
+      { title: "Teams", icon: Users, id: "teams" },
+      { title: "Chat / Announcements", icon: MessageSquare, id: "chat" },
     ],
   },
   {
